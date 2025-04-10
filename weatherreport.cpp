@@ -36,6 +36,25 @@ namespace WeatherSpace
             return 52;
         }
     };
+
+    class HighPrecipitationStub : public IWeatherSensor {
+        int Humidity() const override {
+            return 80; // Arbitrary value
+        }
+
+        int Precipitation() const override {
+            return 70; // High precipitation (>60)
+        }
+
+        double TemperatureInC() const override {
+            return 26; // Above 25°C
+        }
+
+        int WindSpeedKMPH() const override {
+            return 40; // Low wind speed (<50)
+        }
+    };
+
     string Report(const IWeatherSensor& sensor)
     {
         int precipitation = sensor.Precipitation();
@@ -64,12 +83,13 @@ namespace WeatherSpace
     {
         // This instance of stub needs to be different-
         // to give high precipitation (>60) and low wind-speed (<50)
-        SensorStub sensor;
+        HighPrecipitationStub sensor;
 
         // strengthen the assert to expose the bug
         // (function returns Sunny day, it should predict rain)
         string report = Report(sensor);
         assert(report.length() > 0);
+        assert(report.find("rain") != string::npos);
     }
 }
 
